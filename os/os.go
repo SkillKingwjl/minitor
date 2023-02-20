@@ -9,7 +9,7 @@ import (
 )
 
 func GetCpuPercent() float64 {
-	percent, _ := cpu.Percent(time.Second, false)
+	percent, _ := cpu.Percent(time.Duration(time.Second), false)
 	return percent[0]
 }
 func GetMemPercent() float64 {
@@ -25,7 +25,11 @@ func GetCpuInfo() []cpu.InfoStat {
 	info, _ := cpu.Info()
 	return info
 }
-func GetNetInfo() []net.IOCountersStat {
-	netInfo, _ := net.IOCounters(false)
-	return netInfo
+func GetIOInfo() map[string]disk.IOCountersStat {
+	info, _ := disk.IOCounters()
+	return info
+}
+func GetNetInfo(str string) []net.ConnectionStat {
+	info, _ := net.Connections(str)
+	return info
 }
