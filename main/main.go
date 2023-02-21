@@ -9,10 +9,16 @@ import (
 	_ "minitor/os"
 	"minitor/vpn"
 	"net"
+	"net/http"
+	"strings"
+	"time"
 )
 
 func main() {
-	fmt.Println(MakeData())
+	go Run()
+	for {
+
+	}
 }
 
 func MakeData() string {
@@ -34,8 +40,31 @@ func MakeData() string {
 	data.CPU = os.GetCpuPercent()
 	data.MEM = os.GetMemPercent()
 	data.IP = localAddr.IP.String()
-	data.ServerInfo = vpn.StatusHandler("31.13.213.236:17562")
+	ip := localAddr.IP.String() + ":" + "17562"
+	loadStateHandler := vpn.LoadStateHandler(ip)
+	data.ServerInfo = vpn.StatusHandler(ip)
+	data.ServerInfo.Client = loadStateHandler.Client
+	data.ServerInfo.BytesIn = loadStateHandler.BytesIn
+	data.ServerInfo.BytesOut = loadStateHandler.BytesOut
 	marshal, err := json.Marshal(data)
 	dataStr := string(marshal)
+	log.Println(dataStr)
 	return dataStr
+}
+
+func Run() {
+	ticker := time.NewTicker(time.Minute * 1)
+	for {
+		select {
+		case <-ticker.C:
+			data := MakeData()
+			resp, err := http.Post("http://127.0.0.1:7788/servers/monitor", "application/json;charset=utf-8", strings.NewReader(data))
+			if err != nil {
+				log.Printf("post请求失败 error: %+v", err)
+				return
+			}
+			defer resp.Body.Close()
+		}
+	}
+
 }

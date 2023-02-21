@@ -14,7 +14,10 @@ type ConnectedClient struct {
 }
 
 type ServerStatus struct {
-	Version string            `json:"version"`
-	Time    int               `json:"time"`
-	Clients []ConnectedClient `json:"clients"`
+	Version  string            `json:"version"`
+	Time     int               `json:"time"`
+	Client   string            `json:"client"`
+	BytesIn  string            `json:"bytesIn"`
+	BytesOut string            `json:"bytesOut"`
+	Clients  []ConnectedClient `json:"clients"`
 }
