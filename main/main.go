@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"minitor/mod"
 	"minitor/os"
@@ -11,14 +10,15 @@ import (
 	"net"
 	"net/http"
 	"strings"
+	"sync"
 	"time"
 )
 
 func main() {
+	var wg sync.WaitGroup
+	wg.Add(1)
 	go Run()
-	for {
-
-	}
+	wg.Wait()
 }
 
 func MakeData() string {
@@ -36,10 +36,8 @@ func MakeData() string {
 	}
 	defer conn.Close()
 	localAddr := conn.LocalAddr().(*net.UDPAddr)
-	fmt.Println(localAddr.IP.String())
 	data.CPU = os.GetCpuPercent()
 	data.MEM = os.GetMemPercent()
-
 	ip := localAddr.IP.String()
 	//ip := "31.13.213.236"
 	port := "17562"
