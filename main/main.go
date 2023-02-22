@@ -39,10 +39,15 @@ func MakeData() string {
 	fmt.Println(localAddr.IP.String())
 	data.CPU = os.GetCpuPercent()
 	data.MEM = os.GetMemPercent()
-	data.IP = localAddr.IP.String()
-	ip := localAddr.IP.String() + ":" + "17562"
-	loadStateHandler := vpn.LoadStateHandler(ip)
-	data.ServerInfo = vpn.StatusHandler(ip)
+
+	ip := localAddr.IP.String()
+	//ip := "31.13.213.236"
+	port := "17562"
+	ipStr := ip + ":" + port
+	//data.IP = localAddr.IP.String()
+	data.IP = ip
+	loadStateHandler := vpn.LoadStateHandler(ipStr)
+	data.ServerInfo = vpn.StatusHandler(ipStr)
 	data.ServerInfo.Client = loadStateHandler.Client
 	data.ServerInfo.BytesIn = loadStateHandler.BytesIn
 	data.ServerInfo.BytesOut = loadStateHandler.BytesOut

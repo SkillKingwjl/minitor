@@ -2,15 +2,15 @@ package openvpn
 
 type ConnectedClient struct {
 	CommonName         string `json:"name"`
-	RealAddress        string `json:"real_address"`
-	VirtualAddress     string `json:"virtual_address"`
-	VirtualIPv6Address string `json:"virtual_ipv6_address"`
-	BytesRX            int    `json:"bytes_rx"`
-	BytesTX            int    `json:"bytes_tx"`
-	ConnectedSince     int    `json:"connected_since"`
+	RealAddress        string `json:"realAddress"`
+	VirtualAddress     string `json:"virtualAddress"`
+	VirtualIPv6Address string `json:"virtualIpv6Address"`
+	BytesRX            int    `json:"bytesRx"`
+	BytesTX            int    `json:"bytesTx"`
+	ConnectedSince     int    `json:"connectedSince"`
 	Username           string `json:"username"`
-	ClientID           int    `json:"client_id"`
-	PeerID             int    `json:"peer_id"`
+	ClientID           int    `json:"clientId"`
+	PeerID             int    `json:"peerId"`
 }
 
 type ServerStatus struct {
