@@ -58,12 +58,12 @@ func MakeData() string {
 }
 
 func Run() {
-	ticker := time.NewTicker(time.Minute * 1)
+	ticker := time.NewTicker(time.Minute * 10)
 	for {
 		select {
 		case <-ticker.C:
 			data := MakeData()
-			resp, err := http.Post("http://127.0.0.1:7788/servers/monitor", "application/json;charset=utf-8", strings.NewReader(data))
+			resp, err := http.Post("http://api.transwarpv.xyz/servers/monitor", "application/json;charset=utf-8", strings.NewReader(data))
 			if err != nil {
 				log.Printf("post请求失败 error: %+v", err)
 				return
