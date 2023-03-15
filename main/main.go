@@ -2,10 +2,11 @@ package main
 
 import (
 	"encoding/json"
+	"flag"
 	"log"
 	"minitor/mod"
-	"minitor/os"
-	_ "minitor/os"
+	"minitor/os/info"
+	_ "minitor/os/info"
 	"minitor/vpn"
 	"net"
 	"net/http"
@@ -14,10 +15,21 @@ import (
 	"time"
 )
 
+var (
+	url string
+	ti  int64
+)
+
+func init() {
+	flag.StringVar(&url, "url", "https://api.transwarpv.xyz/servers/monitor", "data reporting address")
+	flag.Int64Var(&ti, "t", 10, "upload interval")
+}
+
 func main() {
+	flag.Parse()
 	var wg sync.WaitGroup
 	wg.Add(1)
-	go Run()
+	go Run(url, ti)
 	wg.Wait()
 }
 
@@ -36,10 +48,10 @@ func MakeData() string {
 	}
 	defer conn.Close()
 	localAddr := conn.LocalAddr().(*net.UDPAddr)
-	data.CPU = os.GetCpuPercent()
-	data.MEM = os.GetMemPercent()
+	data.CPU = info.GetCpuPercent()
+	data.MEM = info.GetMemPercent()
 	ip := localAddr.IP.String()
-	//ip := "31.13.213.236"
+	//ip := "31.13.213.52"
 	port := "17562"
 	ipStr := ip + ":" + port
 	//data.IP = localAddr.IP.String()
@@ -55,16 +67,17 @@ func MakeData() string {
 	return dataStr
 }
 
-func Run() {
-	ticker := time.NewTicker(time.Minute * 10)
+func Run(url string, ti int64) {
+	duration := time.Duration(60 * 1000 * 1000 * 1000 * ti)
+	ticker := time.NewTicker(duration)
 	for {
 		select {
 		case <-ticker.C:
 			data := MakeData()
-			resp, err := http.Post("http://api.transwarpv.xyz/servers/monitor", "application/json;charset=utf-8", strings.NewReader(data))
+			resp, err := http.Post(url, "application/json;charset=utf-8", strings.NewReader(data))
 			if err != nil {
 				log.Printf("post请求失败 error: %+v", err)
-				return
+				continue
 			}
 			defer resp.Body.Close()
 		}
